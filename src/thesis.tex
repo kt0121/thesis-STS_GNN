@@ -1,0 +1,114 @@
+\documentclass[a4paper,12pt]{thesis} % 修論・卒論など (ページが右端にでる)   
+
+\usepackage{mysettings} % 各種コマンドなどはこのファイルに書く
+%\usepackage{atbegshi}
+%\usepackage{subcaption} % tmp
+
+% 本原稿用の条件マクロ
+%章ごとにコンパイルできるようにするための設定．
+%このマクロが定義されていない場合，チャプター内は個別のTEXソースとして扱われる．
+\def\MasterFile{本原稿です}
+
+
+%PDFにする際のしおりを付ける際の文字コードの設定
+%WindowsとLinuxを判別して切り替える
+\ifnum 42146=\euc"A4A2
+	\AtBeginShipoutFirst{\special{pdf:tounicode EUC-UCS2}}
+\else
+	\AtBeginShipoutFirst{\special{pdf:tounicode 90ms-RKSJ-UCS2}}
+\fi
+
+%\usepackage[dvipdfm]{color}
+\usepackage[dvipdfmx,setpagesize=false,bookmarks=true,bookmarksnumbered=true,bookmarkstype=toc,colorlinks=true,linkcolor=black,citecolor=black,%
+	pdftitle={タイトル},%
+	pdfauthor={名前　名前},%
+	pdfkeywords={}%
+]{hyperref}
+
+
+\thesis{名古屋大学情報学部 \\ コンピュータ科学科 \\ 卒業論文}
+\title{title}
+\author{2XXX年Y月}
+\date{9999999999 \, 画像処理　大吉}
+\affiliate{}
+
+%\includeonly{introduction, method,relatedwork,  experiment, discussion, conclusion, acknowledgement, reference}
+
+\begin{document}
+
+%タイトルの表示
+\maketitle
+
+% 目次の表示レベルの変更
+% 0 ･･･ チャプターのみ表示
+% 1 ･･･ セクションまで表示
+% 2 ･･･ サブセクションまで表示
+% 3 ･･･ サブサブセクションまで表示
+\setcounter{tocdepth}{2}
+
+\setlength{\baselineskip}{1.85zw}
+\setlength{\textheight}{31\baselineskip}
+
+% 目次と要旨の行間とページあたりの行数を設定
+\setlength{\baselineskip}{1.63zw}
+\setlength{\textheight}{36\baselineskip}
+
+
+%------------------------------------------------------------------------- 
+%\vspace{-800mm}
+\begin{abstract}
+% ここにabst
+\end{abstract}
+
+%------------------------------------------------------------------------- 
+\setlength{\baselineskip}{1.95zw}
+\setlength{\textheight}{30\baselineskip}
+
+% 目次の表示レベルの変更
+% 0 ･･･ チャプターのみ表示
+% 1 ･･･ セクションまで表示
+% 2 ･･･ サブセクションまで表示
+% 3 ･･･ サブサブセクションまで表示
+\setcounter{tocdepth}{2}
+
+\frontmatter
+
+%目次のページを作成する
+\tableofcontents
+
+%表目次のページを作成する
+\listoftables
+
+%図目次のページを作成する
+\listoffigures
+
+
+%とりあえず改ページ
+\clearpage
+
+
+%本文の行間とページあたりの行数を設定
+\setlength{\baselineskip}{1.95zw}
+\setlength{\textheight}{30\baselineskip}
+
+%各章をファイル別で入力する
+\mainmatter
+\include{introduction}		% はじめに
+% \include{simple}			% 単純な手法
+\include{relatedwork} 
+\include{method}			% 提案手法
+\include{experiment}		% 実験
+\include{discussion}		% 考察
+\include{conclusion}		% むすび
+
+
+%巻末
+\backmatter
+\include{acknowledgement}	% 謝辞
+\include{reference}
+% \bibliographystyle{sieicej}
+% \bibliography{thesisB}			% 参考文献
+%\include{publication}		% 発表文献
+%\include{huroku}
+
+\end{document}

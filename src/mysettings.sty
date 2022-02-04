@@ -1,0 +1,117 @@
+%This is style-file for report style of daibo for LaTeX 2e.
+
+\def\version{1.0a}
+\def\update{2008年1月16日}
+
+\typeout{}
+\typeout{---------------------------------------------------------------}
+\typeout{修論・博論用コマンド定義スタイルファイル(for LaTeX 2e)}
+\typeout{[command.sty (Version \version , 更新日時 \update)]}
+\typeout{を読み込みます.....}
+\typeout{}
+\typeout{質問、バグレポートは出口(ddeguchi@suenaga.m.is.nagoya-u.ac.jp)まで。}
+\typeout{（Copyright (C) 2007-2008）}
+\typeout{---------------------------------------------------------------}
+\typeout{}
+
+\usepackage[dvipdfmx]{graphicx}
+%\usepackage{subfigure}
+\usepackage{tabularx}
+%\usepackage{natbib}
+\usepackage[sort&compress,numbers,square,comma]{natbib}
+\usepackage{multirow}
+\usepackage{amsmath, amssymb}
+\usepackage{atbegshi}
+\usepackage{subcaption} % tmp
+\usepackage{siunitx}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{multirow}
+\usepackage{here}
+\usepackage{algorithm}
+\usepackage[table,xcdraw]{xcolor}
+%\usepackage{algorithmic}
+\usepackage{algpseudocode}
+\usepackage{diagbox} 
+%\usepackage{algorithm, algpseudocode}
+%\usepackage{subfigure}
+\usepackage{comment}
+\usepackage[subrefformat=parens,labelformat=simple]{subcaption}
+
+\captionsetup{labelsep = quad}
+\captionsetup{subrefformat = parens}
+\captionsetup{compatibility=false}
+
+
+\algblock{If}{EndIf}
+\algcblock[If]{If}{ElsIf}{EndIf}
+\algcblock{If}{Else}{EndIf}
+\algcblockdefx[Strange]{If}{Eeee}{Oooo}
+[1]{\textbf{Eeee} "#1"}
+{\textbf{Wuuuups\dots}}
+
+
+\renewcommand\thesubfigure{(\alph{subfigure})}
+
+\fboxsep=0pt  %画像と枠線をくっつける。
+\fboxrule=1pt %枠線の太さを1ptにする。
+
+
+%以下2行はcaptionファイル不在のため削除
+%\usepackage[subrefformat=parens]{subcaption}
+%\captionsetup{labelsep = quad}
+
+
+% 文献引用の表示スタイルを変更する
+%\renewcommand{\citeleft}{} 
+%\renewcommand{\citeright}{}
+%\renewcommand{\citeform}[1]{[#1]}
+%\renewcommand{\citedash}{\hbox{～}\penalty\@m}
+
+
+% argmax, argminの関数
+\newcommand{\argmax}[1]{\mathrm{arg}\mathop{\,\mathrm{max}\,}_{#1}}
+\newcommand{\argmin}[1]{\mathrm{arg}\mathop{\,\mathrm{min}\,}_{#1}}
+
+% 表のラベルを少し下げる
+\newcommand{\luuw}[1]{\smash{\lower0.8ex\hbox{#1}}}
+\newcommand{\luw}[1]{\smash{\lower2.0ex\hbox{#1}}}
+\newcommand{\lw}[1]{\smash{\lower2.5ex\hbox{#1}}}
+\newcommand{\uw}[1]{\smash{\lower-2.0ex\hbox{#1}}}
+\newcommand{\uuw}[1]{\smash{\lower-0.8ex\hbox{#1}}}
+\newcommand{\llw}[1]{\smash{\lower4.0ex\hbox{#1}}}
+
+% 記号群
+\newcommand{\Vvec}[1]{\mbox{\boldmath $#1$}}
+\newcommand{\Mat}[1]{{\bf #1}}
+\newcommand{\Complex}[1]{{\mbox{ \boldmath $#1$}}}
+\newcommand{\Set}[1]{\mbox{$\mathcal #1$}}
+
+
+
+%単位
+\newcommand{\degree}[0]{\,\mbox{${}^{\circ}$}}
+\newcommand{\percent}[0]{\,\mbox{\%}}
+\newcommand{\g}[0]{\,\mbox{g}}
+\newcommand{\m}[0]{\,\mbox{m}}
+\newcommand{\mm}[0]{\,\mbox{mm}}
+\newcommand{\cc}[0]{\,\mbox{cc}}
+\newcommand{\mmm}[0]{\,\mbox{\tiny mm${}^3$}}
+\newcommand{\ExtensiveProtocol}[0]{{\it extensive protocol}}
+%\newcommand{\dfrac}[2]{\frac{\displaystyle{\strut #1}}{\displaystyle{#2}}}
+
+%脚注の記号を変更する
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\def\thline{\noalign{\hrule height 1pt}}
+\def\tvline{\vrule width 1pt}
+\newcommand{\Cref}[1]{\mbox{\ref{#1}~章}}
+\newcommand{\Sref}[1]{\mbox{\ref{#1}~節}}
+\newcommand{\SSref}[1]{\mbox{\ref{#1}~節}}
+\newcommand{\Tref}[1]{\mbox{表~\ref{table:#1}}}
+\newcommand{\Eref}[1]{\mbox{式~(\ref{eq:#1})}}
+\newcommand{\Fref}[1]{\mbox{図~\ref{fig:#1}}}
+\newcommand{\Aref}[1]{\mbox{付録~\ref{app:#1}}}
+
+\endinput
+

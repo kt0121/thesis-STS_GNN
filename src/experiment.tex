@@ -1,0 +1,53 @@
+% 本原稿用の条件マクロ
+%章ごとにコンパイルできるようにするための設定．
+%このマクロが定義されていない場合，チャプタ内は個別のTEXソースとして扱われる．
+\expandafter\ifx\csname MasterFile\endcsname\relax
+\documentclass[a4j,twoside,12pt]{thesis} % 修論・卒論など (ページが右端にでる)   
+
+\usepackage{mysettings}
+\usepackage{url}
+\usepackage{bm}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{multirow}
+\usepackage[subrefformat=parens]{subcaption}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{tabularx}
+\usepackage{diagbox} 
+
+\newcolumntype{Y}{&gt;{\centering\arraybackslash}X} %中央揃え
+
+\captionsetup{labelsep = quad}
+\captionsetup{subrefformat = parens}
+\captionsetup{compatibility=false}
+\begin{document}
+
+\addtocounter{chapter}{+3}
+
+\setlength{\baselineskip}{1.95zw}
+\setlength{\textheight}{30\baselineskip}
+\mainmatter
+
+\fi
+% これより上は削除しちゃダメ
+% 本原稿用の条件マクロここまで
+\renewcommand\thefootnote{\arabic{footnote})}
+
+
+\chapter{実験}\label{exper}
+% ここに本文
+適宜 section 分けして書く
+
+% 本原稿用の条件マクロ
+% これ以降は削除しちゃダメ
+\expandafter\ifx\csname MasterFile\endcsname\relax
+\def\MasterFile{本原稿です}
+
+% 参考文献
+% \include{reference}
+
+\bibliographystyle{sieicej}
+\bibliography{thesisB}
+
+\end{document}
+\fi
+% 本原稿用の条件マクロここまで

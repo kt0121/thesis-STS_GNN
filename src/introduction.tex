@@ -1,0 +1,51 @@
+% 本原稿用の条件マクロ章ごとにコンパイルできるようにするための設定．このマクロが定義されていない場合，チャプター内は個別のTEXソースとして扱われる．
+\expandafter\ifx\csname MasterFile\endcsname\relax
+\documentclass[a4j,12pt]{thesis} % 修論・卒論など (ページが右端にでる)
+\usepackage{mysettings}
+%\usepackage{mediabb}
+\usepackage{url}
+%以下2行captionファイルがないため削除
+%\usepackage[subrefformat=parens]{subcaption}
+%\captionsetup{labelsep = quad}
+%\captionsetup{subrefformat = parens}
+%\captionsetup{compatibility=false}
+\usepackage[dvipdfmx]{graphicx}
+\begin{document}
+\newcommand{\ctext}[1]{\raise0.2ex\hbox{\textcircled{\scriptsize{#1}}}}
+\setlength{\baselineskip}{1.95zw}
+\setlength{\textheight}{30\baselineskip}
+\mainmatter
+
+\fi
+% これより上は削除しちゃダメ
+% 本原稿用の条件マクロここまで
+\renewcommand\thefootnote{\arabic{footnote}}
+
+
+
+\chapter{はじめに}\label{intro}
+文の意味的類似度評価タスクとは,2 文を入力として受け取った後,その類似度を求めるタスクである.例えば「Kids in red shirts are playing in the leaves」と「Children in red shirts are playing in the leaves」は類似度が高いと評価し,
+「A woman is riding a horse」と「A man is opening a small package that contains headphones」は類似度が低いと評価する.
+文の意味的類似度評価タスクにおいては,
+多くの自然言語処理モデルが意味情報を元に学習を行っており,構造情報が欠陥しているという問題がある.
+\par また近年,グラフニューラルネットワーク(GNN)が盛んに研究されており,GCN\cite{kipf2017semi}や GAT\cite{velickovic2018graph},GraphSAGE\cite{hamilton2017inductive}など様々な手法が提案されてきた.これらの手法を用いたタスクとしてはノード分類やリンク予測,グラフ分類などが挙げられる.
+現実世界に関しては,Apple 社のスマートアシスタントである Siri の性能向上や,Amazon 社での製品カテゴリの識別,Uber 社の UberEats でのレコメンドシステムなど,様々な場面で GNN が用いられている.
+\par 本研究の目的は,文の意味的類似度評価タスクにおいて.グラフ構造を利用することの有効性を明らかにすることにある.
+具体的には,文中の単語間の依存関係や隣接関係を元に文をグラフ化し利用することで,構造情報を補うことを試みる.
+グラフ構造を利用するにあたって,学習には GNN を用いる.
+\par 本論文の構成は
+% 本原稿用の条件マクロ
+\expandafter\ifx\csname MasterFile\endcsname\relax
+\def\MasterFile{本原稿です}
+
+% 参考文献
+% \include{reference}
+% \bibliographystyle{plain}
+\bibliographystyle{sieicej}
+% \bibliographystyle{junsrt}
+\bibliography{thesisB}
+
+\end{document}
+\fi
+% これ以降は削除しちゃダメ
+% 本原稿用の条件マクロここまで

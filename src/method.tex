@@ -1,0 +1,72 @@
+% 本原稿用の条件マクロ
+%章ごとにコンパイルできるようにするための設定．
+%このマクロが定義されていない場合，チャプター内は個別のTEXソースとして扱われる．
+\expandafter\ifx\csname MasterFile\endcsname\relax
+\documentclass[a4j,twoside,12pt]{thesis} % 修論・卒論など (ページが右端にでる) 
+\usepackage{amsmath, amssymb}
+\usepackage{mysettings}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{comment}
+
+\begin{document}
+
+\addtocounter{chapter}{+2}
+
+\setlength{\baselineskip}{1.95zw}
+\setlength{\textheight}{30\baselineskip}
+\mainmatter
+
+\fi
+% これより上は削除しちゃダメ
+% 本原稿用の条件マクロここまで
+%
+%\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+\renewcommand\thefootnote{\arabic{footnote})}
+\def\vector#1{\mbox{\boldmath $#1$}}
+
+\chapter{研究手法}\label{meth}
+% ここに本文
+本章では,研究手法について説明する.本研究は大きく分けて以下の 3 つに分類される.
+\begin{enumerate}
+  \item 文からのグラフ作成
+  \item グラフの埋め込み生成
+  \item グラフ間の類似度計算
+\end{enumerate}
+\ref{meth:createGraph}節では文からのグラフ作成について, \ref{meth:createEmbedding}節ではグラフレベルの埋め込み生成, \ref{meth:calculateSimilarity}節ではグラフ間の類似度計算について述べる.
+
+\section{文からのグラフ作成}\label{meth:createGraph}
+  この節では,文からのグラフ生成方法について説明する.グラフの生成について,以下の２つを行う.
+  \begin{enumerate}
+    \item ノード生成
+    \item エッジ生成
+  \end{enumerate}
+  生成されたノードとエッジを合わせることでグラフとなる.
+
+  \subsection{ノード生成}\label{meth:createNode}
+    文からのグラフの生成において,各ノードはそれぞれの単語とし,その単語のレンマの埋め込みを取得し,ノードの特徴量とする.
+
+  \subsection{エッジ生成}\label{meth:createEdge}
+    文からのグラフの生成において,各エッジの生成には Universal Dependencies に基づく構文解析を行い,単語間に依存関係があれば双方向にエッジを作成し無向グラフを生成した.
+
+\section{グラフの埋め込み生成}\label{meth:createEmbedding}
+  この節では,グラフレベルの埋め込み生成方法について説明する.この方法では,まずノードレベルの埋め込みを生成し,その後それらをもとにグラフレベルの埋め込みを生成する.
+  \subsection{ノードレベルの埋め込み生成}
+  ノードレベルの埋め込みを生成するを生成するために,Kipf ら\cite{kipf2017semi}と同様の GCN を用いる.
+  GCN の第$l$層における出力は以下の式で表される.
+  \begin{equation}H^{(l)}=f(\tilde{D}^{-\frac{1}{2}}\tilde{A}\tilde{D}^{-\frac{1}{2}}H^{(l-1)}W_{1}^{(l-1)})\end{equation}
+
+\section{グラフ間の類似度計算}\label{meth:calculateSimilarity}
+% 本原稿用の条件マクロ
+% これ以降は削除しちゃダメ
+\expandafter\ifx\csname MasterFile\endcsname\relax
+\def\MasterFile{本原稿です}
+
+% 参考文献
+%\include{reference}
+
+\bibliographystyle{sieicej}
+\bibliography{thesisB}
+
+\end{document}
+\fi
+% 本原稿用の条件マクロここまで

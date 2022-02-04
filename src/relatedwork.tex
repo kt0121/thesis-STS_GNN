@@ -1,0 +1,80 @@
+% 本原稿用の条件マクロ
+%章ごとにコンパイルできるようにするための設定.
+%このマクロが定義されていない場合，チャプター内は個別のTEXソースとして扱われる.
+\expandafter\ifx\csname MasterFile\endcsname\relax
+\documentclass[a4j,twoside,12pt]{thesis} % 修論・卒論など (ページが右端にでる) 
+\usepackage{amsmath, amssymb}
+\usepackage{mysettings}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{comment}
+
+\begin{document}
+
+\addtocounter{chapter}{+1}
+
+\setlength{\baselineskip}{1.95zw}
+\setlength{\textheight}{30\baselineskip}
+\mainmatter
+
+\fi
+% これより上は削除しちゃダメ
+% 本原稿用の条件マクロここまで
+%
+%\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+\newcommand{\argminnnn}{\mathop{\rm arg~min}\limits}
+\renewcommand\thefootnote{\arabic{footnote})}
+\def\vector#1{\mbox{\boldmath $#1$}}
+
+\chapter{関連研究}\label{rel}
+% ここに本文
+本章では,本研究で取り扱っている基礎知識について説明する.本章の構成は次の通りである.\ref{rel:preKnowledge}節では前提知識について述べる. \ref{rel:GNN}節ではグラフニューラルネットワークについて述べる.
+
+\section{前提知識}
+\subsection{fastText}
+fastText\cite{bojanowski2017enriching}は Facebook AI Research によって開発された自然言語処理ライブラリである.このライブラリを使用することで,単語埋め込みの生成やテキストの分類ができる.
+
+\section{グラフニューラルネットワーク}\label{rel:GNN}
+\subsection{Graph Convolutional Network}
+Graph Convolutional Network(GCN)は,CNN のような畳み込み演算を GNN に適用したモデルである.1 層の GCN を用いるとそれぞれの
+ノードが隣接するノードの情報を畳み込むという特徴があり,計算量が低いながらも高い精度を示しているため様々なモデルで活用されている.
+隣接行列 $A$ と特徴行列 $X$ を GCN に与える入力とすると,GCN の第$l$層における出力は以下の式で表される.
+\begin{equation}H^{(l)}=f(\tilde{D}^{-\frac{1}{2}}\tilde{A}\tilde{D}^{-\frac{1}{2}}H^{(l-1)}W_{1}^{(l-1)})\end{equation}
+ここで,$\tilde{A} = A + I_{N}$はノード自身へのエッジを追加した無向グラフの隣接行列であり,$I_N$は単位行列である.
+$\tilde{D}_{ii} = \sum_{j} \tilde{A}_{ij}$であり,$W_{1}^{(l)}$は層に応じた学習可能な重み行列,
+$f(\cdot)$は$ReLU(\cdot) = \max (0, \cdot)$のような活性化関数である.
+また,$H^{(0)}=X$となる.\par
+GCN は層の数を増やしすぎると,全てのノードの埋め込みが同じ値に収束してしまい,性能が低下することがわかっている.
+
+\subsection{SimGNN}
+SimGNN\cite{SimGNN}はグラフニューラルネットワークを用いて近似的に Graph Edit Distance(GED)を求めるモデルである.グラフの入力ノードにはラベルが割り振られており,ノードの特徴量はラベルの One-Hot ベクトルとなる.
+この手法では,入力グラフを複数層の GCN に与えることでノードレベルの埋め込みを生成した後,以下に示す Attention Module を元にグラフレベルの埋め込みを生成する.
+それらの非線形の変換をし, global graph context $c \in \mathbb{R}^{D}$を得る.
+\begin{equation}c = \tanh (\frac{1}{N}W_{2}{\displaystyle \sum_{n=1}^{N}} u_{n})\end{equation}
+ここで,$u_{n} \in \mathbb{R}^{D}$は入力ノード$n$の埋め込み,$D$はノードの埋め込みの次元,$W_2 \in \mathbb{R}^{D \times D}$は学習可能な重み行列である.
+$c$は重み行列を学習することで,グラフの全体的な構造及び特徴量を表すことができ,これに基づいて各ノードの重要度を計算することが可能となる.\par
+ノード$n$に対しての重要度$a_{n}$の計算は,ノード$n$の埋め込み$u_{n}$と$c$の内積を計算した後,シグモイド関数$\sigma(x) = \frac{1}{1+exp(-x)}$を用いることで,重要度$a_{n}$を$(0,1)$の範囲に収める.
+ここではグラフサイズを埋め込みに反映するため,全体の重要度を正規化しない.
+重要度を計算した後,グラフレベルの埋め込み$h \in \mathbb{R}^{D}$を重み付きのノードの埋め込みの総和$h = \sum_{n=1}^{N}a_{n}u_{n}$で計算する.
+Attention Module についてまとめると以下の式になる.
+\begin{equation}h = \sum_{n=1}^{N}\sigma(u_{n}^\mathsf{T}c)u_{n}= \sum_{n=1}^{N}\sigma(u_{n}^\mathsf{T} \tanh (\frac{1}{N}W_{2}\sum_{m=1}^{N}u_{m}))u_{n}\end{equation}
+AttentionModule から 2 つのグラフの埋め込み$h_{i} \in \mathbb{R}^{D}, h_{j} \in \mathbb{R}^{D}$が与えられた後,
+それらの関係をモデル化するために Neural Tensor Network:
+\begin{equation}g(h_{i}, h_{j})=f(h_{i}^\mathsf{T}W_{3}^{[1:K]}h_{j} + V \begin{bmatrix} h_{i}\\h_{j} \end{bmatrix} + b)\end{equation}
+を用いる.
+ここで,$W_{3}^{[1:K]} \in R^{D \times D \times K}$は重み行列,$\begin{bmatrix} $ $ \end{bmatrix}$は結合操作,$V \in \mathbb{R}^{K\times2D}$は重みベクトル.
+$b \in \mathbb{R}^{K}$はバイアスベクトル,$f(\cdot)$は$ReLU(\cdot) = \max (0, \cdot)$のような活性化関数である.
+$K$は K は各グラフ埋め込みペアに対してモデルが生成する類似度の数を制御するハイパーパラメータである.\par
+% 本原稿用の条件マクロ
+% これ以降は削除しちゃダメ
+\expandafter\ifx\csname MasterFile\endcsname\relax
+\def\MasterFile{本原稿です}
+
+% 参考文献
+%\include{reference}
+
+\bibliographystyle{sieicej}
+\bibliography{thesisB}
+
+\end{document}
+\fi
+% 本原稿用の条件マクロここまで

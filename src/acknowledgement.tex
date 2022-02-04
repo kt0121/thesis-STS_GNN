@@ -1,0 +1,29 @@
+% 本原稿用の条件マクロ
+%章ごとにコンパイルできるようにするための設定．
+%このマクロが定義されていない場合，チャプター内は個別のTEXソースとして扱われる．
+\expandafter\ifx\csname MasterFile\endcsname\relax
+\documentclass[a4j,twoside,12pt]{thesis} % 修論・卒論など (ページが右端にでる)   
+\usepackage{mysettings}
+\begin{document}
+
+\setlength{\baselineskip}{1.95zw}
+\setlength{\textheight}{29\baselineskip}
+
+\addtocounter{chapter}{+5}
+\backmatter
+\fi
+% これより上は削除しちゃダメ
+% 本原稿用の条件マクロここまで
+
+
+
+\chapter{謝辞}
+\label{chapter:acknowledgement}
+% 感謝の意を伝えよう
+
+% 本原稿用の条件マクロ
+% これ以降は削除しちゃダメ
+\expandafter\ifx\csname MasterFile\endcsname\relax
+\end{document}
+\fi
+% 本原稿用の条件マクロここまで
