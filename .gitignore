@@ -1,0 +1,9 @@
+node_modules/
+*.*
+!*.md
+!*.tex
+!*.sty
+!*.cls
+!package.json
+!yarn.lock
+!.gitignore
