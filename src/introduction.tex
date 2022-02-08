@@ -29,12 +29,12 @@
 そこで, 文の意味的な類似度を評価する STS タスクが提案されている.
 STS タスクでは, 文``Kids in red shirts are playing in the leaves''と文``Children in red shirts are playing in the leaves''は意味的類似度が高く, 文``A woman is riding a horse''と文``A man is opening a small package that contains headphones''は意味的類似度が低いと評価する.
 \par ニューラルネットワークの発展に伴い, STS タスクでは LSTM や RNN などの自然言語処理モデルを用いた手法が提案された．
-LSTM を用いた手法では, Elvys ら \cite{elvys2018predicting} が Sentences Involving Compositional Knowledge (SICK) データセットでピアソンの相関係数 0.8549 という結果を示している.
+LSTM を用いた手法では, Elvys ら \cite{elvys2018predicting} が Sentences Involving Compositional Knowledge (SICK) \cite{beltagy:arxiv15} データセットでピアソンの相関係数 0.8549 という結果を示している.
 LSTM や RNN は文の意味情報だけを利用し, 文の依存関係のような構文情報を利用していない.
 意味情報に加えて構文情報も扱うことにより, 文を表す特徴量を増やすことが期待できる．構文情報はグラフで表現できる.
 \par そこで, 構文情報からのアプローチとして, グラフ構造と, それを処理するためのグラフニューラルネットワーク (GNN) の利用を検討した.
 代表的な GNN として, Graph Convolutional Network (GCN) \cite{kipf2017semi} や Graph Attention Network (GAT) \cite{velickovic2018graph}, GraphSAGE \cite{hamilton2017inductive} といった手法がある. これらの手法を用いたタスクとしてはノード分類やリンク予測,グラフ分類などが挙げられる. また, グラフ編集距離を近似的に求める SimGNN や, GCN を用いたグラフプーリング手法である Self-Attention Graph Pooling (SAGPool) も提案されている.現実世界では,
-Apple 社ではスマートアシスタントのトリガーフレーズ検出性能向上\cite{pranay2020lattice}や, Amazon 社での AutoKnow\cite{xin2020autoknow}を用いた製品カテゴリの識別, Uber 社の UberEats でのレコメンドシステムなど,様々な場面で GNN が用いられている.
+Apple 社ではスマートアシスタントのトリガーフレーズ検出性能向上\cite{pranay2020lattice}や, Amazon 社での AutoKnow\cite{xin2020autoknow}を用いた製品カテゴリの識別, Uber 社の UberEats でのレコメンドシステム\cite{jain2019food}\cite{bose2019meta}など,様々な場面で GNN が用いられている.
 \par 本研究の目的は, STS タスクにおいて, グラフ構造を用いたアプローチの有効性を明らかにすることである.
 文中の単語間の依存関係や隣接関係を元に文をグラフ化し利用することで,文を表す特徴量を増やすことを試みた.
 グラフ構造を利用するにあたって,学習には GNN を用いた.
@@ -47,7 +47,7 @@ Apple 社ではスマートアシスタントのトリガーフレーズ検出�
 % 参考文献
 % \include{reference}
 % \bibliographystyle{plain}
-\bibliographystyle{sieicej}
+\bibliographystyle{junsrt}
 % \bibliographystyle{junsrt}
 \bibliography{thesisB}
 

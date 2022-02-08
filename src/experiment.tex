@@ -55,7 +55,7 @@
 \end{itemize}
 
 \section{データセット}
-実験には Sentences Involving Compositional Knowledge (SICK) データセットと Semantic Textual Similarity benchmark (STS-b) データセットを用いた.
+実験には Sentences Involving Compositional Knowledge (SICK) \cite{beltagy:arxiv15} データセットと Semantic Textual Similarity Benchmark (STS-b) \cite{cer-etal-2017-semeval} データセットを用いた.
 それぞれのデータセットには文のペアとその類似度が 0-5 の範囲で含まれている.それぞれのデータセットの詳細は以下の表\ref{table:dataset}の通りである.
 \begin{table}
   \caption{データセットの詳細}
@@ -72,7 +72,7 @@
 \end{table}
 
 \section{グラフの作成}
-この節では, グラフの作成について述べる.
+この節では, グラフの作成手法について述べる.
 
 \subsection{ノード生成}
 各ノードはそれぞれの単語とし, ノードを生成した.
@@ -91,7 +91,7 @@
 
 \section{ハイパーパラメータ}
 この節ではモデルのハイパーパラメータについて説明する.
-GCN \cite{kipf2017semi} ( GraphSAGE \cite{hamilton2017inductive} ) の層数は 3 層とし, GCN の第 1 層, 第 2 層, 第 3 層の出力次元はそれぞれ 128, 64, 32 とした. また, NTN 層では $K=16$ とした.
+Graph Convolutional Network (GCN) \cite{kipf2017semi} , またはGraphSAGE \cite{hamilton2017inductive} の層数は 3 層とし, GCN の第 1 層, 第 2 層, 第 3 層の出力次元はそれぞれ 128, 64, 32 とした. また, NTN 層では $K=16$ とした.
 
 \section{評価指標}
 モデルの性能評価にはピアソンの相関係数を用いた.
@@ -152,7 +152,7 @@ GCN \cite{kipf2017semi} ( GraphSAGE \cite{hamilton2017inductive} ) の層数は 
 % 参考文献
 % \include{reference}
 
-\bibliographystyle{sieicej}
+\bibliographystyle{junsrt}
 \bibliography{thesisB}
 
 \end{document}
