@@ -29,11 +29,14 @@
 % ここに本文
 本章では,本研究で取り扱っている基礎知識について説明する.本章の構成は次の通りである.\ref{rel:preKnowledge}節では前提知識について述べる. \ref{rel:GNN}節ではグラフニューラルネットワークについて述べる.
 
-\section{前提知識}
+\section{前提知識}\label{rel:preKnowledge}
+本節では, 研究を行うにあたって必要な前提知識について述べる.
 \subsection{fastText}
 fastText\cite{bojanowski2017enriching}は Facebook AI Research によって開発された自然言語処理ライブラリである.このライブラリを使用することで,単語埋め込みの生成やテキストの分類ができる.
 
 \section{グラフニューラルネットワーク}\label{rel:GNN}
+本節では, グラフニューラルネットワークに関する関連研究について述べる.
+
 \subsection{Graph Convolutional Network}
 Graph Convolutional Network(GCN)は,CNN のような畳み込み演算を GNN に適用したモデルである.1 層の GCN を用いるとそれぞれの
 ノードが隣接するノードの情報を畳み込むという特徴があり,計算量が低いながらも高い精度を示しているため様々なモデルで活用されている.

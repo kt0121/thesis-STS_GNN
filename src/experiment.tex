@@ -14,6 +14,8 @@
 \usepackage{tabularx}
 \usepackage{diagbox} 
 
+\newcommand{\bhline}[1]{\noalign{\hrule height #1}}  
+\newcommand{\bvline}[1]{\vrule width #1}  
 \newcolumntype{Y}{&gt;{\centering\arraybackslash}X} %中央揃え
 
 \captionsetup{labelsep = quad}
@@ -35,8 +37,113 @@
 
 \chapter{実験}\label{exper}
 % ここに本文
-適宜 section 分けして書く
+\section{実験環境}
+実験環境は以下のとおりである.
+\subsection*{ハードウェア}
+\begin{itemize}
+  \item CPU: AMD Ryzen9 5900X(12コア24スレッド)
+  \item メモリ: 32GB
+  \item GPU: RTX 3090
+  \item GPU メモリ: 24GB
+\end{itemize}
+\subsection*{ソフトウェア}
+\begin{itemize}
+  \item OS: Ubuntu 20.04
+  \item CUDA: 11.2
+  \item cuDNN: 8.1
+  \item PyTorch: 1.10.1
+\end{itemize}
 
+\section{データセット}
+実験には Sentences Involving Compositional Knowledge (SICK) データセットと Semantic Textual Similarity benchmark (STS-b) データセットを用いた.
+それぞれのデータセットには文のペアとその類似度が 0-5 の範囲で含まれている.それぞれのデータセットの詳細は以下の表\ref{table:dataset}の通りである.
+\begin{table}
+  \caption{データセットの詳細}
+  \label{table:dataset}
+  \centering
+  \begin{tabular}{l|rrrr}
+    \bhline{1pt}
+          & \multicolumn{1}{c}{train} & \multicolumn{1}{c}{test} & \multicolumn{1}{c}{validation} & \multicolumn{1}{c}{total} \\
+    \hline
+    SICK  & 4,439                     & 4,906                    & 495                            & 9,840                     \\
+    STS-b & 5,749                     & 1,379                    & 1,500                          & 8,628                     \\
+    \bhline{1pt}
+  \end{tabular}
+\end{table}
+
+\section{グラフの作成}
+この節では, グラフの作成について述べる.
+
+\subsection{ノード生成}
+各ノードはそれぞれの単語とし, ノードを生成した.
+各ノードの特徴量は,対応する単語のレンマをもとに, 事前学習済み fastText\cite{bojanowski2017enriching} モデルから得られるものとした.
+ここで, 事前学習済みモデルには Common Crawl データセットでの事前学習済みモデルを利用した.
+本研究では, 未知語に対応するために Word2Vec ではなく fastText を利用した.
+
+\subsection{エッジ生成}
+エッジの生成方法では,2 種類の方法について以下のように実験を行った.
+\subsubsection{依存関係に基づくエッジ生成}
+依存関係に基づくエッジ生成には, Stanza\cite{qi2020stanza} ライブラリを利用した Universal Dependencies に基づく係り受け解析を用いた.
+係り受け解析の結果から, 単語間に依存関係が存在した場合に双方向エッジを作成した.
+
+\subsubsection{依存関係と隣接関係に基づくエッジ生成}
+依存関係と隣接関係に基づくエッジ生成には, 依存関係に基づくエッジに加えて, 単語間に隣接関係があれば双方向エッジを作成した.
+
+\section{ハイパーパラメータ}
+この節ではモデルのハイパーパラメータについて説明する.
+GCN \cite{kipf2017semi} ( GraphSAGE \cite{hamilton2017inductive} ) の層数は 3 層とし, GCN の第 1 層, 第 2 層, 第 3 層の出力次元はそれぞれ 128, 64, 32 とした. また, NTN 層では $K=16$ とした.
+
+\section{評価指標}
+モデルの性能評価にはピアソンの相関係数を用いた.
+\section{ベースライン}
+ベースラインには以下の３つを用いた.
+1つ目がElvys らによる, 長さ5の局所的文脈を考慮した Siamese LSTM,
+2つ目がTextSimGNN\cite{zhou2020sentence}でもベースラインとして用いられている,畳み込み層, Max プーリング層, Flatten 層からなるモデル (SemEval-CNN) ,
+3つ目がTextSIMGNNのグラフ構築法2a (STGCM2a) , 4つ目がTextSIMGNNのグラフ構築法3 (STGCM3) である.
+
+\section{実験結果}
+実験結果を表\ref{table:result}, ベースラインの実験結果を表\ref{table:baseline}に示す.
+\begin{table}
+  \caption{実験結果}
+  \label{table:result}
+  \begin{center}
+  \scalebox{0.85}{
+  \begin{tabular}{p{35mm}||r|r|r|r}
+    \hline
+          & \multicolumn{2}{c|}{SICK}  & \multicolumn{2}{c}{STS-b} \\
+          \cline{2-5}
+          & \multicolumn{1}{c|}{UD} & \multicolumn{1}{c|}{UD-adjacent} & \multicolumn{1}{c|}{UD} & \multicolumn{1}{c}{UD-adjacent} \\
+    \hline \hline
+    GCN-Att-NTN (SimGNN)  & $\mathbf{0.848 ± 0.014}$                   & $\mathbf{0.829 ± 0.019}$                & $\mathbf{0.419 ± 0.052}$                           & $\mathbf{0.406 ± 0.04}$                     \\
+    SAGE-Att-NTN & $0.830 \pm 0.020$                     & $0.829 \pm 0.019$                  & $0.389 \pm 0.042$                  & $0.387 \pm 0.054$                    \\
+    GCN-SAG-NTN  & $0.767 ± 0.022$                    & $0.732 ± 0.037$                    & $0.312 ± 0.167$                           & $0.351 ± 0.195$                     \\
+    SAGE-SAG-NTN & $0.700 \pm 0.041$                    & $0.723 \pm 0.047$                 & $0.219 \pm 0.144$                       &  $0.270 \pm 0.146$      \\
+    GCN-Att-cos &                      &                     &                           &                      \\
+    SAGE-Att-cos &                      &                    &                           &                \\
+    GCN-SAG-cos &                      &                     &                           &                      \\
+    SAGE-SAG-cos &                      &                    &                           &                      \\
+    \hline
+  \end{tabular}
+  }
+  \end{center}
+\end{table}
+
+\begin{table}
+  \caption{実験結果}
+  \label{table:baseline}
+  \begin{center}
+  \begin{tabular}{p{35mm}||r|r}
+    \hline
+          & \multicolumn{1}{c|}{SICK} & \multicolumn{1}{c}{STS-b} \\
+    \hline
+    Elvys's Siamese LSTM &      $0.855$   &                            \\
+    SemEval-CNN &     $0.855 \pm 0.015$   &       $0.776 \pm 0.015$     \\
+    TextSimGNN (STGCM2a) &  $0.754 \pm 0.010$     & $0.352 \pm 0.010 $        \\
+    TextSIMGNN (STGCM3) &   $0.428 \pm 0.010$ &   $0.786 \pm 0.010 $   \\
+    \hline
+  \end{tabular}
+  \end{center}
+\end{table}
 % 本原稿用の条件マクロ
 % これ以降は削除しちゃダメ
 \expandafter\ifx\csname MasterFile\endcsname\relax

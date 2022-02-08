@@ -11,7 +11,7 @@
 \usepackage{colortbl}
 \usepackage{ulem}
 \usepackage[subrefformat=parens]{subcaption}
-
+\usepackage{tabularx}
 \begin{document}
 \addtocounter{chapter}{+4}
 \setlength{\baselineskip}{1.95zw}
@@ -24,9 +24,85 @@
 
 \chapter{考察}\label{dis}
 % ここに本文
-適宜 section 分けして書く
+本節ではグラフ構築法, GNNモデル, データセットについての考察を述べる.
+\section{グラフ構築法}
+実験の結果, 2 通りのグラフ構築法のうち, 依存関係のみに基づくグラフ構築法がわずかに依存関係と隣接関係を用いたグラフ構築法よりも相関係数が高くなった.
+情報量が増えたのにもかかわらずこのような結果となった理由として, 本実験のようにエッジの重みが同等である場合に, 隣接関係を含めたことによって依存関係の情報が埋もれてしまったことに起因していると推測される. Graph Attention Network (GAT) などのエッジの重みを考慮するモデルを利用することで, この問題は解決できることが期待される.
+\par また, 依存関係に基づくグラフ構築法が SICKデータセットでは TextSimGNN \cite{zhou2020sentence} のどのグラフ構築法よりも優れていた. このことは, 文の意味的類似度評価タスクにおいて, 依存関係に基づくグラフ構築法の有効性を示唆している.
+\section{GNNモデル}
+実験の結果, 8 通りのモデルのうち, ノードの畳み込みにはGCN\cite{kipf2017semi} を,グラフを表現する埋め込みの生成にはアテンションモジュール\cite{bai2019simgnn}を, グラフ間の類似度評価にはニューラルテンソルネットワーク(NTN)\cite{bai2019simgnn}をそれぞれ利用した方法において SICKデータセットでは $0.848 \pm 0.014$ , STS-bデータセットで $0.419 \pm 0.052$ 最も優れた結果が得られた.この方法はグラフの作成を除き Bai ら\cite{bai2019simgnn} や \cite{zhou2020sentence} のモデルと同様のモデルを利用している. また, ノードの畳み込みにGraphSAGE \cite{hamilton2017inductive} を用いた場合でも, SICKデータセットでは $0.830 \pm 0.020$ , STS-bデータセットで $0.389 \pm 0.042$ という同等の結果を得られた. このことは, 文の意味的類似度評価タスクにおけるグラフニューラルネットワークの有効性を示唆している.
+\par しかし, SAGPool を用いた手法では相関係数が大きく下がった. これは, SAGPool 内でGCNを用いたことにより, GCNの層数が増えてしまった結果, SAGPool内で扱う重要度が近い値に収束してしまったことに起因していると推測される. また, SAGPoolとGraphSAGEを組み合わせた方法について, 更に相関係数が下がってしまった結果としては SAGPoolでの重要度の算出にはGCNを用いているが, ノードの畳み込みにはGraphSAGEを用いていることにより整合性がない状態になってしまっていることに起因していると推測される.
+\par グラフ間の類似度評価にコサイン類似度を用いた場合にも相関係数が下がった.これは \cite{} で述べられているように, コサイン類似度では2つのデータの表現の相互作用が不十分になることが多いためであると推測される.
 
+\section{データセット}
+本実験で用いた2つのデータセットのうち, SICKデータセットではベースラインと同等の結果を示したが, STS-bデータセットではTextSimGNN (STGCM2a) を除くすべてのベースラインを下回る結果となった.
+このことについては２つのことに起因していると考えられる. 第1項ではデータセット内の単語の意味情報の差について, 第2項ではデータセット内の文の長さの差について考察する.
 
+\subsection{単語の意味情報の差}
+表\ref{table:SICKSTS} に示すように, SICKデータセットでは含まれる単語が類似している場合に文の類似度は高い傾向があるが, STS-bデータセットでは含まれる単語が類似していても文の類似度が低いことが多々ある.
+\begin{table}
+  \caption{データセットに含まれる文の例}
+  \label{table:SICKSTS}
+  \begin{center}
+  \begin{tabularx}{\linewidth}{l||X|X|X}
+    \hline
+          & \multicolumn{1}{c|}{Sentence 1} & \multicolumn{1}{c|}{Sentence 2} & \multicolumn{1}{c}{Similarity}  \\
+    \hline
+    \hline
+    SICK &
+    A woman is boiling noodles in water &
+    The person is boiling noodles &
+    4.5\\
+    \hline
+    SICK &
+    There are no children playing and waiting &
+    Three Asian kids are dancing and a man is looking &
+    1.6\\
+    \hline
+    STS-b &
+    The man is using a sledghammer to break the concrete block that is on the other man &
+    A man breaks a slab of concrete that is lying on a prone man with a sledge hammer &
+    5.0 \\
+    \hline
+    STS-b &
+    A man is playing the piano &
+    A man is playing the trumpet &
+    1.6\\
+    \hline
+  \end{tabularx}
+  \end{center}
+\end{table}
+
+STS-bデータセットでは類似度が高いものは文の言い換えであるものが多く, モデルはより文の意味情報を学習する必要がある. しかし今回のグラフ構築法では, 単語の埋め込み生成で文脈を考慮しなかった. このことによる意味情報の不足が実験結果に影響を与えたと推測される. 単語の埋め込み生成で, BERT などの文脈を考慮したモデルを利用することでこの問題が解決できる期待できる.
+
+\subsection{文の長さの差}
+SICKデータセットでは主に短文が含まれているのに対して, STS-bデータセットでは文の長さが様々である.
+学習用データにおいて,表\ref{table:len}に示すように, 最長文と最短文の間の単語数の差はSICKデータセットでは 29 であるのに対して, STS-bデータセットではその倍程度の 53 となっている.
+このことにより生じるグラフサイズの差により, STS-bデータセットでは学習が適切に行えなかったのではないかと推測される.
+\begin{table}
+  \caption{データセットに含まれる最長文と最短文 (学習用データ)}
+  \label{table:len}
+  \begin{center}
+  \begin{tabularx}{\linewidth}{l||X|X|X}
+    \hline
+          & \multicolumn{1}{c|}{最長文} & \multicolumn{1}{c|}{最短分} & \multicolumn{1}{c}{単語数の差} \\
+    \hline
+    \hline
+    SICK &
+    A piece of bread, which is big, is having butter spread upon it by a man OR A piece of bread, which is big, is being spread with butter by a man &
+    Men are sawing &
+    29 \\
+
+    \hline
+    STS-b &
+    iraq has been lobbying for the security council to stop using the country's oil revenue to pay compensation to victims of the 1991 gulf war and the salaries of the united nations monitoring, verification and inspection commission inspectors and to have all money remaining in the united nation's oil-for-food accounts transferred to the government's development fund. &
+    Two robots kiss. &
+    53 \\
+    \hline
+
+  \end{tabularx}
+  \end{center}
+\end{table}
 %====================================================================================
 
 % 本原稿用の条件マクロ

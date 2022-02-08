@@ -1,6 +1,8 @@
-\documentclass[a4paper,12pt]{thesis} % 修論・卒論など (ページが右端にでる)   
+\documentclass[a4paper,12pt,dvipdfmx]{thesis} % 修論・卒論など (ページが右端にでる)   
 
 \usepackage{mysettings} % 各種コマンドなどはこのファイルに書く
+\usepackage{graphicx}
+\usepackage{color}
 %\usepackage{atbegshi}
 %\usepackage{subcaption} % tmp
 
@@ -17,7 +19,8 @@
 \else
 	\AtBeginShipoutFirst{\special{pdf:tounicode 90ms-RKSJ-UCS2}}
 \fi
-
+\newcommand{\bhline}[1]{\noalign{\hrule height #1}}  
+\newcommand{\bvline}[1]{\vrule width #1}  
 %\usepackage[dvipdfm]{color}
 \usepackage[dvipdfmx,setpagesize=false,bookmarks=true,bookmarksnumbered=true,bookmarkstype=toc,colorlinks=true,linkcolor=black,citecolor=black,%
 	pdftitle={タイトル},%
@@ -26,10 +29,10 @@
 ]{hyperref}
 
 
-\thesis{名古屋大学情報学部 \\ コンピュータ科学科 \\ 卒業論文}
-\title{title}
-\author{2XXX年Y月}
-\date{9999999999 \, 画像処理　大吉}
+\thesis{コンピュータ科学科\\知能システム系\\卒業論文}
+\title{文の意味的類似度評価における\\グラフ構造の利用}
+\author{2022年2月}
+\date{101830073 \, 加藤~辰弥}
 \affiliate{}
 
 %\includeonly{introduction, method,relatedwork,  experiment, discussion, conclusion, acknowledgement, reference}
@@ -57,7 +60,27 @@
 %------------------------------------------------------------------------- 
 %\vspace{-800mm}
 \begin{abstract}
-% ここにabst
+	文の意味的類似度を求めること(STS タスク)は, 翻訳の性能評価や迷惑メール$\cdot$スミッシングなどの検出に役立つ.
+	このタスクは, 具体的には``Kids in red shirts are playing in the leaves''と``Children in red shirts are playing in the leaves''は意味的類似度が高いと評価し, ``A woman is riding a horse''と``A man is opening a small package that contains headphones''は意味的類似度が低いと評価するタスクである.
+	\par Grigori らは編集距離を用いて文の類似度を求める手法を提案した. しかし, この手法では文の構造情報を扱っているが意味情報は考慮していない.
+	その後, ニューラルネットワークが発展するにつれて, LSTM や RNN などの自然言語処理モデルを用いた手法が提案された．
+	STS タスクでは, Elvys らが LSTM を用いて， ピアソンの相関係数 0.8549 という良好な結果を示している.
+	しかし, LSTM や RNN などの一般的な自然言語処理モデルで扱われるシーケンスデータには, 構造情報が欠落している. 構造情報には依存関係のようなグラフ構造で表現する事に適した情報が存在する.
+	これらから, 意味情報だけでなく構造情報も扱うことにより, 文を表す特徴量を増やすことがが期待できる.
+	\par したがって, 構造情報の面からのアプローチとして, グラフ構造と, それを処理するためのグラフニューラルネットワーク (GNN) の利用を検討した.
+	代表的な GNN として, Graph Convolutional Network (GCN) や Graph Attention Network (GAT), GraphSAGE といった手法がある.また, グラフ編集距離を近似的に求める SimGNN や, GCN を用いたグラフプーリング手法である Self-Attention Graph Pooling (SAGPool) のような手法も提案されている.
+	\par 本研究の目的は, STS タスクにおいて, グラフ構造を用いたアプローチの有効性を明らかにすることである.
+	\par 実験は, 文からのグラフの作成, ノードの畳み込み, グラフを表現する埋め込み生成, グラフ間の類似度の評価という流れで行い, それぞれの過程で 2 通りずつの方法を採用し, 計 16 通りの方法を試した.
+	実験の評価にはピアソンの相関係数を利用した.
+	データセットには, 短文データセットである Sentences Involving Compositional Knowledge (SICK) と混在長データセットである STS Benchmark (STS-b) の二つのデータセットを用いた.
+	\par 今回の実験で用いた 16 通りの方法のうち, グラフの作成には単語の依存関係に基づく構築法を, ノードの畳み込みには GCN を, グラフを表現する埋め込みの生成にはアテンションモジュールを, グラフ間の類似度評価にはニューラルテンソルネットワークを利用した方法で最も優れた結果が得られた.
+	この方法では SICK で Elvys らの結果と同等の良好な性能を示した.このことは STS タスクにおけるグラフ構造の利用の有効性を示唆している.
+	しかし, STS-b では十分な結果を得られなかった.
+	この理由として 二つの理由が推測された.
+	一つ目の理由として, 作成したグラフには構造情報は含まれていたが, 意味情報が十分に含まれていなかったことが挙げられる.
+	二つ目の理由として, グラフサイズに差が生まれることが挙げられる.
+	これらの理由から生じるデータの差が今回の実験の結果を導いたと示唆される.
+	\par 将来の展望としては, 単語の埋め込み生成に文脈を考慮したモデルを用いることで, 今回のモデルの欠点を補うことが期待できる.
 \end{abstract}
 
 %------------------------------------------------------------------------- 
