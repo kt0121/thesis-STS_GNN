@@ -30,7 +30,7 @@
 情報量が増えたのにもかかわらずこのような結果となった理由として, 本実験のようにエッジの重みが同等である場合に, 隣接関係を含めたことによって依存関係の情報が埋もれてしまったことに起因していると推測される. Graph Attention Network (GAT) などのエッジの重みを考慮するモデルを利用することで, この問題は解決できることが期待される.
 \par また, 依存関係に基づくグラフ構築法が Sentence Involving Compositional Knowledge (SICK) \cite{beltagy:arxiv15} データセットでは TextSimGNN \cite{zhou2020sentence} のどのグラフ構築法よりも優れていた. このことは, 文の意味的類似度評価タスクにおいて, 依存関係に基づくグラフ構築法の有効性を示唆している.
 \section{GNNモデル}
-実験の結果, 8 通りのモデルのうち, ノードの畳み込みには GCN\cite{kipf2017semi} を,グラフを表現する埋め込みの生成にはアテンションモジュール\cite{bai2019simgnn}を, グラフ間の類似度評価にはニューラルテンソルネットワーク\cite{socher2013reasoning}をそれぞれ利用した方法において SICK データセットでは $0.848 \pm 0.014$ , STS Benckmark (STS-b) \cite{cer-etal-2017-semeval} データセットで $0.419 \pm 0.052$ 最も優れた結果が得られた.この方法はグラフの作成を除き Bai ら\cite{bai2019simgnn} や \cite{zhou2020sentence} と同様のモデルを利用している. また, ノードの畳み込みに GraphSAGE \cite{hamilton2017inductive} を用いた場合でも, SICK データセットでは $0.830 \pm 0.020$ , STS-b データセットで $0.389 \pm 0.042$ という同等の結果を得られた. SICKデータセットに関しての結果は, Elvys ら\cite{elvys2018predicting}と同等の結果を示した. このことは, 文の意味的類似度評価タスクにおけるグラフニューラルネットワークの有効性を示唆している.
+実験の結果, 8 通りのモデルのうち, ノードの畳み込みには GCN\cite{kipf2017semi} を,グラフを表現する埋め込みの生成にはアテンションモジュール\cite{bai2019simgnn}を, グラフ間の類似度評価にはニューラルテンソルネットワーク\cite{socher2013reasoning}をそれぞれ利用した方法において SICK データセットでは $0.848 \pm 0.014$ , STS Benckmark (STS-b) \cite{cer-etal-2017-semeval} データセットでは $0.419 \pm 0.052$ と最も優れた結果が得られた.この方法はグラフの作成を除き Bai ら\cite{bai2019simgnn} や \cite{zhou2020sentence} と同様のモデルを利用している. また, ノードの畳み込みに GraphSAGE \cite{hamilton2017inductive} を用いた場合でも, SICK データセットでは $0.830 \pm 0.020$ , STS-b データセットで $0.389 \pm 0.042$ という同等の結果を得られた. SICK データセットに関しての結果は, Elvys ら\cite{elvys2018predicting}と同等の結果を示した. このことは, 文の意味的類似度評価タスクにおけるグラフニューラルネットワークの有効性を示唆している.
 \par しかし, SAGPool を用いた手法では相関係数が大きく下がった. これは, SAGPool 内で GCN を用いたことにより, GCN の層数が増えてしまった結果, SAGPool 内で扱う重要度が近い値に収束してしまったことに起因していると推測される. また, SAGPool と GraphSAGE を組み合わせた方法について, 更に相関係数が下がってしまった結果としては SAGPool での重要度の算出には GCN を用いているが, ノードの畳み込みには GraphSAGE を用いていることにより整合性がない状態になってしまっていることに起因していると推測される.
 \par グラフ間の類似度評価にコサイン類似度を用いた場合にも相関係数が下がった.コサイン類似度では, \cite{socher2013reasoning} で述べられているように,  2 つのデータの表現の相互作用が不十分になることが多いことが知られている.
 
@@ -44,7 +44,7 @@
   \caption{データセットに含まれる文の例}
   \label{table:SICKSTS}
   \begin{center}
-  \begin{tabularx}{\linewidth}{l||X|X|X}
+  \begin{tabularx}{\linewidth}{l||X|X|r}
     \hline
           & \multicolumn{1}{c|}{Sentence 1} & \multicolumn{1}{c|}{Sentence 2} & \multicolumn{1}{c}{Similarity}  \\
     \hline
@@ -83,9 +83,9 @@ SICK データセットでは主に短文が含まれているのに対して, S
   \caption{データセットに含まれる最長文と最短文 (学習用データ)}
   \label{table:len}
   \begin{center}
-  \begin{tabularx}{\linewidth}{l||X|X|X}
+  \begin{tabularx}{\linewidth}{l||X|l|r}
     \hline
-          & \multicolumn{1}{c|}{最長文} & \multicolumn{1}{c|}{最短分} & \multicolumn{1}{c}{単語数の差} \\
+          & \multicolumn{1}{c|}{Longest Sentence} & \multicolumn{1}{c|}{Shortest Sentence} & \multicolumn{1}{c}{Word Count Gap} \\
     \hline
     \hline
     SICK &
