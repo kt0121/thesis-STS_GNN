@@ -28,38 +28,14 @@
 
 \chapter{関連研究}\label{rel}
 % ここに本文
-本章では,本研究で取り扱っている基礎知識について説明する.本章の構成は次の通りである.\ref{rel:preKnowledge}節では事前知識について述べる. \ref{rel:GNN}節ではグラフニューラルネットワークについて述べる.
-
-\section{事前知識}\label{rel:preKnowledge}
-本節では, 研究を行うにあたって必要な事前知識について述べる.
-\subsection{トランスダクティブ学習, 帰納学習}
-本項ではトランスダクティブ (Transductive) 学習, 帰納 (Inductive) 学習の 2 つの学習について説明をする.
-トランスダクティブ学習とは, 学習時にデータは存在するもののラベルが割り振られていないデータに対して, 推論を行う学習である. その様子を図 \ref{fig:Transductive} に示す.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]
-  {img/Transductive.jpg}
-  \caption{トランスダクティブ学習}
-  \label{fig:Transductive}
-\end{figure}
-
-それに比べて帰納学習とは, 学習時に存在しなかったデータに対しての推論を行う学習である. その様子を図 \ref{fig:Inductive} に示す.
+本章では,本研究で取り扱っている基礎知識について説明する.本章の構成は次の通りである.\ref{rel:fastText}節ではfastTextについて述べる. \ref{rel:GNN}節ではグラフニューラルネットワークについて述べる.
 
 
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]
-  {img/Inductive.jpg}
-  \caption{帰納学習}
-  \label{fig:Inductive}
-\end{figure}
-
-
-\subsection{fastText}
+\section{fastText}
+\label{rel:fastText}
 fastText\cite{bojanowski2017enriching}は Facebook AI Research によって開発された自然言語処理モデルである.このモデルを使用することで,単語埋め込みの生成やテキストの分類ができる.
-本項では, Word2Vec で用いられている Skip-gram モデルについて説明し, その後, fastText で提案されたサブワードモデルについて説明する.
-\subsubsection*{Skip-gram モデル}
+本節では, Word2Vec で用いられている Skip-gram モデルについて説明し, その後, fastText で提案されたサブワードモデルについて説明する.
+\subsection{Skip-gram モデル}
 Skip-gram モデルでは, サイズ W の単語の語彙が与えられ,単語はそのインデックス $w \in \{ 1,...,W \}$によって識別される場合, 各単語$w$のベクトル表現を学習することが目標となる.
 分布仮説(周囲の単語によって単語の意味が形成されるという仮説)に基づき, 単語のベクトル表現はその文脈に現れる単語を予測して学習される.Skip-gram モデルでは式\ref{eq:fastLog}の対数尤度が最大になるように学習される.
 \begin{equation}
@@ -91,7 +67,7 @@ Skip-gram モデルでは, サイズ W の単語の語彙が与えられ,単語�
 
 \par Skip-gram モデルでは各単語に個別のベクトル表現を用いており, 単語の内部構造は考慮していない.
 
-\subsubsection*{サブワードモデル}
+\subsection{サブワードモデル}
 サブワードモデルでは, Skip-gram モデルで考慮されていなかった単語の内部構造を考慮するために, スコア付け関数を変更した.このモデルでは, 各単語の先頭と末尾に$<$と$>$を追加した,文字単位での$n$-gram を用いる. 例えば, \textsl{where}という単語に対して, $n=3$の場合の$n$-gram の集合は以下のようになる.
 \centerline{$\{<$\textsl{wh, whe, her, ere, re}$>\}$}
 このような, 文字単位での$n$-gram を利用したスコア付け関数は式\ref{eq:fastScore}で表される.
@@ -136,7 +112,7 @@ $\tilde{D}_{ii} = \sum_{j} \tilde{A}_{ij}$であり,$W_{1}^{(l)}$は層に応じ
 GCN は層の数を増やしすぎると,全てのノードの埋め込みが同じ値に収束してしまい,性能が低下することがわかっている.
 
 \subsection{GraphSAGE}
-GraphSAGE は GCN を拡張したものであり, 帰納学習を行うことができるモデルである. GCN との違いとして, GraphSAGE では近傍ノードを抽出し, それを集約するための aggregate 関数を学習を学習する.GraphSAGE での前方伝播では, まずノードの近傍ノードを抽出し, サブグラフを作成する.
+GraphSAGE は GCN を拡張したものであり, 帰納学習(本項末尾の補足で説明)を行うことができるモデルである. GCN との違いとして, GraphSAGE では近傍ノードを抽出し, それを集約するための aggregate 関数を学習を学習する.GraphSAGE での前方伝播では, まずノードの近傍ノードを抽出し, サブグラフを作成する.
 その後, 近傍ごとに異なる aggregate 関数を用いて, サブグラフ内のノードから特徴量を集約する.
 最終的に集約した特徴量を元にラベルの推論を行う.前方伝播の過程を図\ref{fig:SAGE}に示す.
 
@@ -168,6 +144,29 @@ Pooling aggregator は, 近傍ノードを全結合層に与え, その結果の
   \mathrm{AGGREGATE}_{k}^{\mathrm{pool}} = \max(\{ \sigma ( \mathbf{W_{2}}_{pool} \mathbf{h}_{u_{i}}^{k} + \mathbf{b} ), \forall u_{i} \in \mathcal{N}(v) \})
 \end{equation}
 ここで, $\sigma$ は非線形の活性化関数であり, $\mathbf{b}$はバイアスである.
+
+\paragraph*{補足:トランスダクティブ学習, 帰納学習}\label{omake}
+補足として,トランスダクティブ (Transductive) 学習, 帰納 (Inductive) 学習の 2 つの学習について説明をする.
+トランスダクティブ学習とは, 学習時にデータは存在するもののラベルが割り振られていないデータに対して, 推論を行う学習である. その様子を図 \ref{fig:Transductive} に示す.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]
+  {img/Transductive.jpg}
+  \caption{トランスダクティブ学習}
+  \label{fig:Transductive}
+\end{figure}
+
+それに比べて帰納学習とは, 学習時に存在しなかったデータに対しての推論を行う学習である. その様子を図 \ref{fig:Inductive} に示す.
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]
+  {img/Inductive.jpg}
+  \caption{帰納学習}
+  \label{fig:Inductive}
+\end{figure}
 
 \subsection{SimGNN}
 SimGNN\cite{bai2019simgnn}は GNN を用いて近似的に Graph Edit Distance(GED)を求めるモデルである.グラフの入力ノードにはラベルが割り振られており,ノードの特徴量はラベルの One-Hot ベクトルとなる.
